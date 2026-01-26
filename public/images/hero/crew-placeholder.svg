@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#1f2937"/>
+  <rect x="50" y="200" width="200" height="250" rx="10" fill="#16a34a" opacity="0.8"/>
+  <rect x="60" y="210" width="180" height="120" rx="5" fill="#d1d5db"/>
+  <circle cx="100" cy="400" r="30" fill="#374151"/>
+  <circle cx="200" cy="400" r="30" fill="#374151"/>
+  <rect x="300" y="280" width="450" height="170" rx="10" fill="#16a34a"/>
+  <rect x="320" y="300" width="200" height="80" rx="5" fill="#d1d5db"/>
+  <text x="420" y="350" font-family="Arial, sans-serif" font-size="24" fill="#1f2937" text-anchor="middle">DUMPSTER RESCUE</text>
+  <circle cx="680" cy="420" r="25" fill="#374151"/>
+  <circle cx="620" cy="420" r="25" fill="#374151"/>
+  <circle cx="400" cy="150" r="40" fill="#fbbf24"/>
+  <circle cx="500" cy="140" r="35" fill="#fbbf24"/>
+  <circle cx="600" cy="155" r="38" fill="#fbbf24"/>
+  <rect x="370" y="190" width="60" height="90" rx="5" fill="#16a34a"/>
+  <rect x="470" y="175" width="60" height="105" rx="5" fill="#16a34a"/>
+  <rect x="570" y="193" width="60" height="87" rx="5" fill="#16a34a"/>
+  <text x="400" y="480" font-family="Arial, sans-serif" font-size="16" fill="#9ca3af" text-anchor="middle">Replace with actual crew photo</text>
+</svg>

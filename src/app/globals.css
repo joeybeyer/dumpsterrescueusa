@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+}
+
+/* Default link styles - only for inline text links, not buttons */
+a:not([class*="bg-"]):not([class*="rounded-"]) {
+  @apply text-green-600 hover:text-green-700 transition-colors;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-sans font-bold tracking-tight;
+}
+
+main {
+  @apply min-h-screen;
+}
+
+/* Mobile CRO: Scroll margin for inputs to prevent keyboard overlap */
+input, select, textarea {
+  scroll-margin-bottom: env(safe-area-inset-bottom, 120px);
+}
+
+/* Mobile CRO: Slider touch dead zone - prevents scroll hijacking */
+.slider-touch-zone {
+  @apply py-4;
+  touch-action: pan-y pinch-zoom;
+}
