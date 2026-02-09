@@ -20,7 +20,7 @@ export default function ServicesPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 pb-16 pt-10">
-      <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+      <p className="text-xs font-bold uppercase tracking-wide text-red-600">
         Services
       </p>
       <h1 className="mt-2 text-3xl font-bold text-gray-900">
@@ -43,7 +43,7 @@ export default function ServicesPage() {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}/`}
-                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg"
+                  className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg"
                 >
                   <h3 className="text-lg font-bold text-gray-900">
                     {service.name}

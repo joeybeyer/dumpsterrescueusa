@@ -34,7 +34,7 @@ export default function LocalCrewBadge({ defaultCity = "Bartlett" }: LocalCrewBa
   }, []);
 
   return (
-    <div className="absolute bottom-3 left-3 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
+    <div className="absolute bottom-3 left-3 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
       Local {city} Crew
     </div>
   );

@@ -31,21 +31,33 @@ export default function ContactForm() {
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
-    // For now, we'll use a mailto fallback since there's no backend
-    // In production, this would POST to an API endpoint or service like Formspree
-    const subject = encodeURIComponent(`Quote Request: ${data.projectType}`);
-    const body = encodeURIComponent(
-      `Name: ${data.name}\nPhone: ${data.phone}\nAddress: ${data.address}\nProject Type: ${data.projectType}\n\nDescription:\n${data.description}`
-    );
-    window.location.href = `mailto:info@dumpsterrescueusa.com?subject=${subject}&body=${body}`;
-    setSubmitting(false);
-    setSubmitted(true);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          phone: data.phone,
+          email: `${data.phone}@phone-only.local`, // Placeholder for phone-only submissions
+          projectType: data.projectType,
+          message: `Address: ${data.address}\n\nDescription:\n${data.description || "Not provided"}`,
+          source: "/contact",
+          formTimestamp: Date.now()
+        })
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
-        <svg className="mx-auto h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+        <svg className="mx-auto h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <h3 className="mt-4 text-lg font-bold text-gray-900">Request Sent!</h3>
@@ -67,7 +79,7 @@ export default function ContactForm() {
           type="text"
           id="name"
           {...register("name", { required: "Name is required" })}
-          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
           placeholder="John Smith"
         />
         {errors.name && (
@@ -90,7 +102,7 @@ export default function ContactForm() {
               message: "Please enter a valid phone number"
             }
           })}
-          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
           placeholder="(630) 555-1234"
         />
         {errors.phone && (
@@ -107,7 +119,7 @@ export default function ContactForm() {
           type="text"
           id="address"
           {...register("address", { required: "Address is required" })}
-          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
           placeholder="123 Main St, Bartlett, IL 60103"
         />
         {errors.address && (
@@ -123,7 +135,7 @@ export default function ContactForm() {
         <select
           id="projectType"
           {...register("projectType", { required: "Please select a project type" })}
-          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
         >
           <option value="">Select a service...</option>
           {projectTypes.map((type) => (
@@ -146,7 +158,7 @@ export default function ContactForm() {
           id="description"
           rows={4}
           {...register("description")}
-          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+          className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
           placeholder="Describe what you need removed, approximate volume, access notes, etc."
         />
         <p className="mt-1 text-xs text-gray-500">
@@ -158,7 +170,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-green-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700 disabled:opacity-50"
+        className="w-full rounded-xl bg-red-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700 disabled:opacity-50"
       >
         {submitting ? "Sending..." : "Request Quote"}
       </button>

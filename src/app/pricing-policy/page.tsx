@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Pricing Policy",
-  description: "Pricing policy for Dumpster Rescue USA.",
+  description: "Pricing policy for Dumpster Rescue LLC.",
   alternates: {
     canonical: "/pricing-policy/"
   }
@@ -17,3 +17,4 @@ export default function PricingPolicyPage() {
     </div>
   );
 }
+

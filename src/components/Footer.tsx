@@ -29,25 +29,34 @@ export default function Footer({ geoLine }: FooterProps) {
   const defaultGeoLine = "Serving DuPage, Kane, and Cook County suburbs across Chicagoland.";
 
   return (
-    <footer className="bg-gray-900 pb-6 pt-12 text-sm text-white">
+    <footer className="bg-black pb-6 pt-12 text-sm text-white">
       <div className="mx-auto w-full max-w-6xl px-6">
         {/* 4-Column Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Column 1: Brand + Trust */}
           <div>
-            <p className="text-lg font-bold">{brand.name}</p>
-            <p className="mt-1 text-white/70">Family-Owned • Licensed & Insured</p>
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/optimized/logo.webp"
+                alt="Dumpster Rescue LLC"
+                className="h-20"
+              />
+              <div>
+                <p className="font-heading text-lg font-bold uppercase">{brand.name}</p>
+                <p className="text-white/70">Family-Owned • Licensed & Insured</p>
+              </div>
+            </div>
 
             <div className="mt-4 space-y-2 text-white/80">
               <div className="flex items-start gap-2">
-                <svg className="mt-0.5 h-4 w-4 shrink-0 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="mt-0.5 h-4 w-4 shrink-0 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span>{brand.primaryLocation.city}, IL</span>
               </div>
               <div className="flex items-start gap-2">
-                <svg className="mt-0.5 h-4 w-4 shrink-0 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="mt-0.5 h-4 w-4 shrink-0 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 <span>Service Office: {brand.secondaryLocation.city}, IL</span>
@@ -101,7 +110,7 @@ export default function Footer({ geoLine }: FooterProps) {
               <li>
                 <Link
                   href="/locations/"
-                  className="inline-flex items-center gap-1 font-medium text-green-400 hover:text-green-300"
+                  className="inline-flex items-center gap-1 font-medium text-yellow-400 hover:text-yellow-300"
                 >
                   View all locations
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +127,7 @@ export default function Footer({ geoLine }: FooterProps) {
             <div className="mt-3 space-y-3">
               <a
                 href={brand.phoneHref}
-                className="flex items-center gap-2 text-white hover:text-green-400"
+                className="flex items-center gap-2 text-white hover:text-yellow-400"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -127,14 +136,14 @@ export default function Footer({ geoLine }: FooterProps) {
               </a>
               <a
                 href={brand.smsHref}
-                className="flex items-center gap-2 text-white hover:text-green-400"
+                className="flex items-center gap-2 text-white hover:text-yellow-400"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <span>Text Us for a Quote</span>
               </a>
-              <div className="flex items-center gap-2 text-green-400">
+              <div className="flex items-center gap-2 text-yellow-400">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -238,3 +247,4 @@ export default function Footer({ geoLine }: FooterProps) {
     </footer>
   );
 }
+

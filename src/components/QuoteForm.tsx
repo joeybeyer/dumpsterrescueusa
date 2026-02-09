@@ -13,6 +13,7 @@ type FormData = {
   name: string;
   email: string;
   phone: string;
+  smsOptIn?: boolean;
   message?: string;
   honeypot: string;
 };
@@ -80,6 +81,37 @@ const commercialSizes = [
   { value: "live-load", label: "Live Load (We wait while you load)" },
   { value: "recurring", label: "Recurring Service (Weekly/Monthly)" }
 ];
+
+// Visual volume/scope cards per service category
+const volumeCardsByCategory: Record<string, { value: string; projectType: string; label: string; subtitle?: string; description: string; badge?: string }[]> = {
+  junk: [
+    { value: "single-item", projectType: "junk-furniture-appliances", label: "Single Item", description: "Couch, fridge, mattress, etc." },
+    { value: "7-yard-truck", projectType: "junk-furniture-appliances", label: "Small Load", subtitle: "\u00BC Truck", description: "Think a few items and boxes" },
+    { value: "half-truck", projectType: "junk-garage-basement", label: "Medium Load", subtitle: "\u00BD Truck", description: "Small garage or large room", badge: "Most Popular" },
+    { value: "full-truck", projectType: "junk-estate-cleanout", label: "Full Truck", subtitle: "Max Capacity", description: "Whole basement or large renovation" },
+    { value: "not-sure", projectType: "junk-furniture-appliances", label: "I'm Not Sure", description: "Just give me a ballpark" },
+  ],
+  dumpster: [
+    { value: "10-yard", projectType: "dumpster-renovation", label: "10 Yard", subtitle: "Small", description: "1 room or heavy debris (concrete/dirt)" },
+    { value: "15-yard", projectType: "dumpster-renovation", label: "15 Yard", subtitle: "Medium", description: "Garage cleanout or decluttering" },
+    { value: "20-yard", projectType: "dumpster-renovation", label: "20 Yard", subtitle: "Large", description: "Full renovation, roofing, whole home", badge: "Best Value" },
+    { value: "rescue-combo", projectType: "dumpster-renovation", label: "Rescue Combo", subtitle: "15-Yard + Crew", description: "Dumpster AND we load the first 7 yards" },
+    { value: "not-sure", projectType: "dumpster-renovation", label: "I'm Not Sure", description: "Just give me a ballpark" },
+  ],
+  demolition: [
+    { value: "hot-tub", projectType: "demo-hot-tub", label: "Hot Tub Removal", description: "Standard hot tub tear-out and haul", badge: "Most Requested" },
+    { value: "shed", projectType: "demo-shed-deck-fence", label: "Shed / Deck / Fence", description: "Outdoor structure tear-down" },
+    { value: "consult", projectType: "demo-interior", label: "Interior Tear-out", description: "Kitchen, bath, or room demo" },
+    { value: "not-sure", projectType: "demo-shed-deck-fence", label: "Something Else", description: "We'll call to discuss your project" },
+  ],
+  commercial: [
+    { value: "20-yard-commercial", projectType: "commercial", label: "Single Dumpster", description: "Construction or roofing debris", badge: "Most Common" },
+    { value: "multi-load", projectType: "commercial", label: "Multiple Dumpsters", description: "Ongoing project, multiple hauls" },
+    { value: "recurring", projectType: "commercial", label: "Recurring Service", description: "Weekly or monthly pickups" },
+    { value: "live-load", projectType: "commercial", label: "Live Load", description: "We wait while you load" },
+    { value: "not-sure", projectType: "commercial", label: "Not Sure Yet", description: "Let's discuss your needs" },
+  ],
+};
 
 // Helper functions
 const isJunkRemoval = (value: string) => value?.startsWith("junk-");
@@ -181,11 +213,6 @@ export default function QuoteForm({
   const projectType = watch("projectType");
   const dumpsterSize = watch("dumpsterSize");
 
-  // Reset size selection when project type changes
-  useEffect(() => {
-    setValue("dumpsterSize", "");
-  }, [projectType, setValue]);
-
   // Reset project type when service category changes
   useEffect(() => {
     setValue("projectType", "");
@@ -217,6 +244,17 @@ export default function QuoteForm({
     }, 5000);
     return () => clearInterval(interval);
   }, [submitted]);
+
+  // Auto-advance Step 2 after card selection (300ms visual feedback delay)
+  useEffect(() => {
+    if (step === 2 && serviceCategory) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setStep(3);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [serviceCategory, step]);
 
   // Zip code lookup
   const lookupZip = async () => {
@@ -253,10 +291,10 @@ export default function QuoteForm({
         return;
       }
     } else if (step === 3) {
-      // Require size selection for all service types that show size options
-      fieldsToValidate = needsSizeSelector(projectType)
-        ? ["projectType", "dumpsterSize"]
-        : ["projectType"];
+      if (!dumpsterSize) {
+        setError("Please select an option to continue");
+        return;
+      }
     }
     const valid = fieldsToValidate.length === 0 || await trigger(fieldsToValidate);
     if (valid) {
@@ -283,9 +321,19 @@ export default function QuoteForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...data,
+          zipCode: data.zipCode,
+          city: data.city,
+          state: data.state,
+          projectType: data.projectType,
+          dumpsterSize: data.dumpsterSize,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          smsOptIn: data.smsOptIn,
+          message: data.message,
           source: source || window.location.pathname,
-          formTimestamp: formLoadTime
+          formTimestamp: formLoadTime,
+          honeypot: data.honeypot
         })
       });
 
@@ -305,92 +353,123 @@ export default function QuoteForm({
   if (submitted) {
     const testimonial = testimonials[currentTestimonial];
     return (
-      <div className={`rounded-2xl border border-gray-200 bg-white p-6 shadow-lg md:p-8 ${className}`}>
-        <div className="text-center">
-          {/* Checkmark */}
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+      <div className={`rounded-lg border border-gray-200 bg-white shadow-lg ${className}`}>
+        {/* Progress bar at 100% */}
+        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+          <div className="flex items-center justify-center gap-2">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className="h-2.5 flex-1 rounded-full bg-red-600 shadow-sm shadow-red-200"
+              />
+            ))}
           </div>
-
-          <h3 className="mt-4 text-2xl font-bold text-gray-900">Request Received!</h3>
-          <p className="mt-2 text-gray-600">
-            We&apos;ll be in touch shortly with your personalized quote.
+          <p className="mt-2 text-center text-xs font-semibold text-red-600">
+            Complete!
           </p>
+        </div>
 
-          {/* Phone nearby reminder - increases pickup rate */}
-          <div className="mt-3 flex items-center justify-center gap-2 text-sm text-blue-600">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            <span>Please keep your phone nearby</span>
-          </div>
-          {/* SMS confirmation expectation */}
-          <p className="mt-2 text-xs text-gray-500">
-            You&apos;ll also receive a quick confirmation text.
-          </p>
-
-          {/* What happens next */}
-          <div className="mt-8 text-left">
-            <h4 className="font-bold text-gray-900">What Happens Next</h4>
-            <div className="mt-4 space-y-4">
-              <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
-                  1
-                </div>
-                <p className="text-sm text-gray-700">
-                  We&apos;re reviewing your project details and calculating your quote
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
-                  2
-                </div>
-                <p className="text-sm text-gray-700">
-                  A team member will call you within 15 minutes during business hours
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
-                  3
-                </div>
-                <p className="text-sm text-gray-700">
-                  Schedule your delivery - often available same-day or next-day
-                </p>
-              </div>
+        <div className="p-6 md:p-8">
+          <div className="text-center">
+            {/* Checkmark */}
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <svg className="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-          </div>
 
-          {/* Phone CTA */}
-          <div className="mt-8 rounded-xl bg-gray-50 p-4">
-            <p className="text-sm font-semibold text-gray-900">Need it faster? Call us now:</p>
-            <a
-              href={brand.phoneHref}
-              className="mt-2 inline-block rounded-xl bg-green-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700"
-            >
-              Call {brand.phone}
-            </a>
-          </div>
-
-          {/* Rotating testimonial */}
-          <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <p className="text-sm italic text-gray-700">&ldquo;{testimonial.quote}&rdquo;</p>
-            <p className="mt-2 text-xs font-semibold text-gray-600">
-              - {testimonial.name}, {testimonial.location}
+            <h3 className="mt-4 text-2xl font-bold text-gray-900">Request Received!</h3>
+            <p className="mt-2 text-gray-600">
+              We&apos;re on it. Expect a text or call within 2-3 minutes.
             </p>
-          </div>
 
-          {/* Social proof */}
-          <div className="mt-4 flex items-center justify-center gap-1">
-            <div className="flex text-yellow-400">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <svg key={star} className="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                </svg>
-              ))}
+            {/* Phone nearby reminder */}
+            <div className="mt-3 flex items-center justify-center gap-2 text-sm text-red-600">
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span className="font-medium">Keep your phone nearby!</span>
             </div>
-            <span className="text-xs text-gray-600">Rated 5.0/5 by 64 Customers</span>
+
+            {/* Text a Photo CTA - faster pricing option */}
+            <div className="mt-6 rounded-lg border-2 border-dashed border-yellow-400 bg-yellow-50 p-4">
+              <p className="text-sm font-bold text-gray-900">Want a faster price?</p>
+              <p className="mt-1 text-sm text-gray-600">
+                Skip the wait &mdash; text a photo of your junk and get a price in minutes.
+              </p>
+              <a
+                href={brand.smsHref}
+                className="mt-3 inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700"
+              >
+                <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Text a Photo to {brand.phone}
+              </a>
+            </div>
+
+            {/* What happens next */}
+            <div className="mt-6 text-left">
+              <h4 className="font-bold text-gray-900">What Happens Next</h4>
+              <div className="mt-4 space-y-4">
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
+                    1
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    We&apos;re reviewing your project details and calculating your quote
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
+                    2
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    A team member will text or call you within 2-3 minutes during business hours
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
+                    3
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Schedule your pickup &mdash; often available same-day or next-day
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Phone CTA */}
+            <div className="mt-6 rounded-lg bg-gray-50 p-4">
+              <p className="text-sm font-semibold text-gray-900">Prefer to talk? Call us now:</p>
+              <a
+                href={brand.phoneHref}
+                className="mt-2 inline-block rounded-lg border-2 border-red-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-red-600 hover:bg-red-600 hover:text-white"
+              >
+                Call {brand.phone}
+              </a>
+            </div>
+
+            {/* Rotating testimonial */}
+            <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <p className="text-sm italic text-gray-700">&ldquo;{testimonial.quote}&rdquo;</p>
+              <p className="mt-2 text-xs font-semibold text-gray-600">
+                - {testimonial.name}, {testimonial.location}
+              </p>
+            </div>
+
+            {/* Social proof */}
+            <div className="mt-4 flex items-center justify-center gap-1">
+              <div className="flex text-yellow-400">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <svg key={star} className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="text-xs text-gray-600">Rated 5.0/5 by 66 Customers</span>
+            </div>
           </div>
         </div>
       </div>
@@ -398,21 +477,21 @@ export default function QuoteForm({
   }
 
   return (
-    <div className={`rounded-2xl border border-gray-200 bg-white shadow-lg ${className}`}>
-      {/* Progress indicator - simplified 4-step visual */}
-      <div className="border-b border-gray-200 px-6 py-4">
+    <div className={`rounded-lg border border-gray-200 bg-white shadow-lg ${className}`}>
+      {/* Progress indicator - vibrant 4-step visual */}
+      <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
         <div className="flex items-center justify-center gap-2">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
-              className={`h-2 flex-1 rounded-full transition-colors ${
-                step >= s ? "bg-green-600" : "bg-gray-200"
+              className={`h-2.5 flex-1 rounded-full transition-all duration-300 ${
+                step >= s ? "bg-red-600 shadow-sm shadow-red-200" : "bg-gray-300"
               }`}
             />
           ))}
         </div>
-        <p className="mt-2 text-center text-xs text-gray-500">
-          Step {step} of 4: {step === 1 ? "Location" : step === 2 ? "Service Type" : step === 3 ? "Details" : "Contact"}
+        <p className="mt-2 text-center text-xs font-semibold text-gray-700">
+          Step {step} of 4: {step === 1 ? "Your Area" : step === 2 ? "Service Type" : step === 3 ? "Project Details" : "Almost Done!"}
         </p>
       </div>
 
@@ -428,7 +507,7 @@ export default function QuoteForm({
 
         {/* Error message */}
         {error && (
-          <div className="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
             {error}
           </div>
         )}
@@ -438,7 +517,7 @@ export default function QuoteForm({
           <div className="space-y-4">
             <div>
               <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
-                Zip Code <span className="text-red-500">*</span>
+                Where should we come? <span className="text-red-500">*</span>
               </label>
               <div className="mt-1 flex gap-2">
                 <input
@@ -452,12 +531,12 @@ export default function QuoteForm({
                       message: "Please enter a valid 5-digit zip code"
                     }
                   })}
-                  className="block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                  className="block w-full rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   placeholder="60103"
                 />
                 {zipLookupLoading && (
                   <div className="flex items-center">
-                    <svg className="h-5 w-5 animate-spin text-green-600" fill="none" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 animate-spin text-red-600" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -475,11 +554,11 @@ export default function QuoteForm({
 
             {/* City/State display */}
             {zipValid && city && state && (
-              <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3">
-                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3">
+                <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-sm font-medium text-green-700">
+                <span className="text-sm font-medium text-red-700">
                   {city}, {state}
                 </span>
               </div>
@@ -488,9 +567,9 @@ export default function QuoteForm({
             <button
               type="button"
               onClick={nextStep}
-              className="w-full rounded-xl bg-green-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700"
+              className="w-full rounded-lg bg-red-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700"
             >
-              Check Availability
+              Get My Instant Quote
             </button>
           </div>
         )}
@@ -507,18 +586,18 @@ export default function QuoteForm({
               <button
                 type="button"
                 onClick={() => setServiceCategory("junk")}
-                className={`relative flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`relative flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-all ${
                   serviceCategory === "junk"
-                    ? "border-green-600 bg-green-50 ring-2 ring-green-200"
-                    : "border-green-300 bg-green-50/30 hover:border-green-400 hover:bg-green-50"
+                    ? "border-red-600 bg-red-50 ring-2 ring-red-200"
+                    : "border-red-300 bg-red-50/30 hover:border-red-400 hover:bg-red-50"
                 }`}
               >
                 {/* Most Popular badge */}
-                <span className="absolute -top-2 right-3 rounded-full bg-green-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                <span className="absolute -top-2 right-3 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                   Most Popular
                 </span>
                 <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${
-                  serviceCategory === "junk" ? "bg-green-600 text-white" : "bg-green-100 text-green-600"
+                  serviceCategory === "junk" ? "bg-red-600 text-white" : "bg-red-100 text-red-600"
                 }`}>
                   <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
@@ -529,7 +608,7 @@ export default function QuoteForm({
                   <p className="text-sm text-gray-500">Full-service junk removal - we load &amp; haul</p>
                 </div>
                 {serviceCategory === "junk" && (
-                  <svg className="ml-auto h-6 w-6 shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="ml-auto h-6 w-6 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
@@ -539,7 +618,7 @@ export default function QuoteForm({
               <button
                 type="button"
                 onClick={() => setServiceCategory("dumpster")}
-                className={`flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-all ${
                   serviceCategory === "dumpster"
                     ? "border-blue-600 bg-blue-50 ring-2 ring-blue-200"
                     : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
@@ -567,7 +646,7 @@ export default function QuoteForm({
               <button
                 type="button"
                 onClick={() => setServiceCategory("demolition")}
-                className={`flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-all ${
                   serviceCategory === "demolition"
                     ? "border-orange-600 bg-orange-50 ring-2 ring-orange-200"
                     : "border-gray-200 hover:border-orange-300 hover:bg-gray-50"
@@ -595,7 +674,7 @@ export default function QuoteForm({
               <button
                 type="button"
                 onClick={() => setServiceCategory("commercial")}
-                className={`flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all ${
+                className={`flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-all ${
                   serviceCategory === "commercial"
                     ? "border-purple-600 bg-purple-50 ring-2 ring-purple-200"
                     : "border-gray-200 hover:border-purple-300 hover:bg-gray-50"
@@ -625,170 +704,133 @@ export default function QuoteForm({
               Not sure which to choose? Pick the closest option — we&apos;ll guide you.
             </p>
 
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={prevStep}
-                className="flex-1 rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={nextStep}
-                disabled={!serviceCategory}
-                className="flex-1 rounded-xl bg-green-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700 disabled:opacity-50"
-              >
-                Continue
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={prevStep}
+              className="w-full rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
+            >
+              Back
+            </button>
           </div>
         )}
 
-        {/* Step 3: Project Details (filtered by category) */}
+        {/* Step 3: Project Scope (Visual Cards) */}
         {step === 3 && (
           <div className="space-y-4 pb-20 md:pb-0">
-            <div>
-              <label htmlFor="projectType" className="block text-sm font-medium text-gray-700">
-                Tell us more about your project <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="projectType"
-                {...register("projectType", { required: "Please select a service" })}
-                className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-              >
-                <option value="">Select your specific need...</option>
-                {getFilteredServices().map((group) => (
-                  <optgroup key={group.group} label={group.group}>
-                    {group.options.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              {errors.projectType && (
-                <p className="mt-1 text-xs text-red-600">{errors.projectType.message}</p>
-              )}
-              {/* Helper text to defuse price anxiety */}
-              <p className="mt-1.5 text-xs text-gray-500">
-                Not sure? Choose the closest option — we&apos;ll confirm pricing by phone.
-              </p>
+            <p className="text-center text-sm font-medium text-gray-700">
+              {serviceCategory === "junk" ? "How much stuff are we rescuing?" :
+               serviceCategory === "dumpster" ? "What size dumpster do you need?" :
+               serviceCategory === "demolition" ? "What are we tearing down?" :
+               serviceCategory === "commercial" ? "What does your project need?" :
+               "Tell us about your project"}
+            </p>
+
+            {/* Hidden inputs to keep form data for submission */}
+            <input type="hidden" {...register("projectType")} />
+            <input type="hidden" {...register("dumpsterSize")} />
+
+            <div className="grid gap-3">
+              {(volumeCardsByCategory[serviceCategory || "junk"] || []).map((card) => (
+                <button
+                  key={card.value}
+                  type="button"
+                  onClick={() => {
+                    setValue("dumpsterSize", card.value);
+                    setValue("projectType", card.projectType);
+                  }}
+                  className={`relative flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all ${
+                    dumpsterSize === card.value
+                      ? "border-red-600 bg-red-50 ring-2 ring-red-200"
+                      : card.value === "not-sure"
+                      ? "border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      : card.badge
+                      ? "border-red-200 bg-red-50/30 hover:border-red-300 hover:bg-red-50"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {card.badge && (
+                    <span className="absolute -top-2 right-3 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                      {card.badge}
+                    </span>
+                  )}
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
+                    dumpsterSize === card.value ? "bg-red-600 text-white" : "bg-gray-100 text-gray-500"
+                  }`}>
+                    {card.value === "not-sure" ? (
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : card.subtitle ? (
+                      <span>{card.subtitle}</span>
+                    ) : (
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-gray-900">{card.label}</p>
+                    <p className="text-sm text-gray-500">{card.description}</p>
+                  </div>
+                  {dumpsterSize === card.value && (
+                    <svg className="h-6 w-6 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </button>
+              ))}
             </div>
 
-            {/* Dynamic size selector - shows different options based on service type */}
-            {needsSizeSelector(projectType) && (
-              <div>
-                <label htmlFor="dumpsterSize" className="block text-sm font-medium text-gray-700">
-                  {getSizeLabel(projectType)} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="dumpsterSize"
-                  {...register("dumpsterSize", {
-                    required: needsSizeSelector(projectType) ? "Please make a selection" : false
-                  })}
-                  className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-                >
-                  <option value="">Select an option...</option>
-                  {getSizeOptions(projectType).map((size) => (
-                    <option key={size.value} value={size.value}>
-                      {size.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.dumpsterSize && (
-                  <p className="mt-1 text-xs text-red-600">{errors.dumpsterSize.message}</p>
-                )}
-
-                {/* $399 Deal highlight for 7-yard truck */}
-                {dumpsterSize === "7-yard-truck" && (
-                  <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-3">
-                    <p className="text-sm text-green-800">
-                      <strong>$399 Flat Rate Deal:</strong> Our 7-yard dump truck holds about as much as a standard pickup truck bed. We load it, haul it, and you pay one flat price. No hidden fees.
-                    </p>
-                  </div>
-                )}
-
-                {/* $999 Rescue Combo highlight */}
-                {dumpsterSize === "rescue-combo" && (
-                  <div className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
-                    <p className="text-sm text-yellow-800">
-                      <strong>VIP Upgrade - THE RESCUE COMBO:</strong> We drop a 15-Yard Dumpster AND our crew loads the first 7 yards for you immediately. Perfect for heavy starts or when you need extra muscle on day one.
-                    </p>
-                  </div>
-                )}
-
-                {/* Demolition photo requirement */}
-                {isDemolition(projectType) && dumpsterSize === "consult" && (
-                  <div className="mt-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
-                    <p className="text-sm text-blue-800">
-                      <strong>Photo Required:</strong> Text us photos of your project for an accurate quote. We&apos;ll respond within 15 minutes during business hours.
-                    </p>
-                  </div>
-                )}
-
-                {/* Commercial multi-load highlight */}
-                {isCommercial(projectType) && dumpsterSize === "multi-load" && (
-                  <div className="mt-2 rounded-lg border border-purple-200 bg-purple-50 p-3">
-                    <p className="text-sm text-purple-800">
-                      <strong>Contractor Volume Pricing:</strong> We offer discounted rates for ongoing projects. One point of contact, flexible scheduling, and priority delivery windows.
-                    </p>
-                  </div>
-                )}
-
-                {/* Commercial recurring highlight */}
-                {isCommercial(projectType) && dumpsterSize === "recurring" && (
-                  <div className="mt-2 rounded-lg border border-purple-200 bg-purple-50 p-3">
-                    <p className="text-sm text-purple-800">
-                      <strong>Recurring Service:</strong> Set it and forget it. We&apos;ll schedule regular pickups on your terms. Perfect for property managers and GCs with ongoing demo work.
-                    </p>
-                  </div>
-                )}
-
-                {/* Commercial live-load highlight */}
-                {isCommercial(projectType) && dumpsterSize === "live-load" && (
-                  <div className="mt-2 rounded-lg border border-purple-200 bg-purple-50 p-3">
-                    <p className="text-sm text-purple-800">
-                      <strong>Live Load Service:</strong> We bring the truck, you load it, we haul it away. Same-day turnaround, no rental period needed.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Availability message - contextual based on selection */}
-            {projectType && (
-              <div className="rounded-xl bg-green-50 p-3">
-                <p className="text-sm text-green-700">
-                  <span className="font-semibold">Great news!</span>{" "}
-                  {isJunkRemoval(projectType)
-                    ? "Same-day junk removal often available. We'll confirm timing when we call."
-                    : isDumpsterRental(projectType)
-                    ? "Same-day and next-day dumpster delivery available in your area."
-                    : isDemolition(projectType)
-                    ? "Demolition projects typically scheduled within 48-72 hours."
-                    : isCommercial(projectType)
-                    ? "Commercial accounts get priority scheduling and volume pricing."
-                    : "We'll confirm availability when we call."}
+            {/* Deal highlights */}
+            {dumpsterSize === "7-yard-truck" && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm text-red-800">
+                  <strong>$399 Flat Rate Deal:</strong> Our 7-yard dump truck holds about as much as a standard pickup bed. One flat price, no hidden fees.
                 </p>
               </div>
             )}
 
+            {dumpsterSize === "rescue-combo" && (
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+                <p className="text-sm text-yellow-800">
+                  <strong>THE RESCUE COMBO:</strong> 15-Yard Dumpster AND our crew loads the first 7 yards for you. Extra muscle on day one.
+                </p>
+              </div>
+            )}
+
+            {/* Demolition: Text a photo prompt - pricing varies by material */}
+            {serviceCategory === "demolition" && (
+              <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                <svg className="h-5 w-5 shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <p className="text-sm text-blue-800">
+                  <strong>Tip:</strong> Demo pricing varies by material. <a href={brand.smsHref} className="font-bold underline">Text us a photo</a> for the most accurate quote.
+                </p>
+              </div>
+            )}
+
+            {/* Reassurance micro-copy */}
+            <p className="text-center text-xs text-gray-500">
+              Don&apos;t worry, your final price is confirmed on-site before we touch a thing!
+            </p>
+
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-4 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
               >
                 Back
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="flex-1 rounded-xl bg-green-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700"
+                disabled={!dumpsterSize}
+                className="flex-1 rounded-lg bg-red-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700 disabled:opacity-50"
               >
-                Continue
+                ALMOST THERE &rarr;
               </button>
             </div>
           </div>
@@ -797,8 +839,8 @@ export default function QuoteForm({
         {/* Step 4: Contact Info */}
         {step === 4 && (
           <div className="space-y-4 pb-20 md:pb-0">
-            <p className="text-sm text-gray-600">
-              Almost done! Just need your contact info to send your quote.
+            <p className="text-sm font-medium text-gray-700">
+              Where should we send your free quote?
             </p>
 
             <div>
@@ -812,33 +854,11 @@ export default function QuoteForm({
                   required: "Name is required",
                   minLength: { value: 2, message: "Name must be at least 2 characters" }
                 })}
-                className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 placeholder="John"
               />
               {errors.name && (
                 <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Please enter a valid email address"
-                  }
-                })}
-                className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-                placeholder="john@example.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
               )}
             </div>
 
@@ -856,35 +876,87 @@ export default function QuoteForm({
                     message: "Please enter a valid phone number"
                   }
                 })}
-                className="mt-1 block w-full rounded-xl border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 placeholder="(630) 555-1234"
               />
               {errors.phone && (
                 <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
               )}
-              {/* Trust microcopy */}
-              <p className="mt-2 flex items-center gap-1 text-xs text-gray-500">
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                We never spam or sell your info. Used only to provide your quote.
-              </p>
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email Address <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Please enter a valid email address"
+                  }
+                })}
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-sm shadow-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                placeholder="john@example.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+              )}
+            </div>
+
+            {/* SMS opt-in checkbox */}
+            <label className="flex cursor-pointer items-start gap-2.5">
+              <input
+                type="checkbox"
+                {...register("smsOptIn")}
+                defaultChecked={true}
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+              />
+              <span className="text-sm text-gray-600">
+                Text me my quote <span className="text-xs text-gray-400">(Recommended &mdash; fastest response)</span>
+              </span>
+            </label>
+
+            {/* Trust Box */}
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <svg className="h-4 w-4 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="text-sm text-gray-700"><strong>Fast:</strong> Expect a text/call within 2-3 minutes</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="h-4 w-4 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm text-gray-700"><strong>Free:</strong> No credit card required. Zero obligation.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="h-4 w-4 shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span className="text-sm text-gray-700"><strong>Safe:</strong> We hate spam too. Your info stays with us.</span>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-4 text-sm font-bold uppercase tracking-wide text-gray-700 shadow hover:bg-gray-50"
               >
                 Back
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 rounded-xl bg-green-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700 disabled:opacity-50"
+                className="flex-1 rounded-lg bg-red-600 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {submitting ? "Sending..." : "Get My Quote"}
+                {submitting ? "Sending..." : "GET MY SAME-DAY QUOTE"}
               </button>
             </div>
           </div>

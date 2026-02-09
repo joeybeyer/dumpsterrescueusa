@@ -77,7 +77,7 @@ export default function ReviewsStrip() {
         <div className="flex items-center gap-3">
           <GoogleIcon />
           <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-green-600">
+            <p className="text-sm font-bold uppercase tracking-wide text-red-600">
               Google Reviews
             </p>
             <p className="text-2xl font-bold text-gray-900">
@@ -86,9 +86,9 @@ export default function ReviewsStrip() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 rounded-full bg-green-50 px-3 py-1">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-          <p className="text-sm font-semibold text-green-700">
+        <div className="flex items-center gap-2 rounded-full bg-red-50 px-3 py-1">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
+          <p className="text-sm font-semibold text-red-700">
             Call & speak to Frank, the owner
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function ReviewsStrip() {
           href="https://www.google.com/maps/place/Dumpster+Rescue+LLC/@41.9952457,-88.2026682,17z/data=!4m16!1m9!3m8!1s0x880f07d388d5fce1:0xa410c666518792f8!2sDumpster+Rescue+LLC!8m2!3d41.9952457!4d-88.2026682!9m1!1b1!16s%2Fg%2F11lf227nvz!3m5!1s0x880f07d388d5fce1:0xa410c666518792f8!8m2!3d41.9952457!4d-88.2026682!16s%2Fg%2F11lf227nvz"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-green-600 hover:text-green-700 hover:underline"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 hover:underline"
         >
           See all 64 reviews on Google
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

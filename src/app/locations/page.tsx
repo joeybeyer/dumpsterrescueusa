@@ -14,7 +14,7 @@ export const metadata = {
 export default function LocationsPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 pb-16 pt-10">
-      <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+      <p className="text-xs font-bold uppercase tracking-wide text-red-600">
         Locations
       </p>
       <h1 className="mt-2 text-3xl font-bold text-gray-900">

@@ -90,10 +90,10 @@ export default function CityPage({ params }: PageProps) {
       <SetUserCity city={location.name} />
       <Breadcrumbs items={breadcrumbs} />
       <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+        <p className="text-xs font-bold uppercase tracking-wide text-red-600">
           Location
         </p>
-        <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+        <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
           Same-day / 24-7 response line
         </div>
         <h1 className="mt-2 text-3xl font-bold text-gray-900">
@@ -106,28 +106,28 @@ export default function CityPage({ params }: PageProps) {
           Need{" "}
           <Link
             href={`/services/${moneyServices[0]?.slug}/`}
-            className="font-semibold text-green-600"
+            className="font-semibold text-red-600"
           >
             {moneyServices[0]?.name.toLowerCase()}
           </Link>{" "}
           in {location.name}? Our local crew handles{" "}
           <Link
             href={`/services/${moneyServices[2]?.slug}/`}
-            className="font-semibold text-green-600"
+            className="font-semibold text-red-600"
           >
             {moneyServices[2]?.name.toLowerCase()}
           </Link>
           ,{" "}
           <Link
             href={`/services/${moneyServices[3]?.slug}/`}
-            className="font-semibold text-green-600"
+            className="font-semibold text-red-600"
           >
             {moneyServices[3]?.name.toLowerCase()}
           </Link>
           , and{" "}
           <Link
             href={`/services/${moneyServices[1]?.slug}/`}
-            className="font-semibold text-green-600"
+            className="font-semibold text-red-600"
           >
             light {moneyServices[1]?.name.toLowerCase()}
           </Link>{" "}
@@ -135,7 +135,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
         <p className="mt-2 text-sm text-gray-700">
           We dispatch from Bartlett with a Medinah service office. See{" "}
-          <Link href="/locations/" className="font-semibold text-green-600">
+          <Link href="/locations/" className="font-semibold text-red-600">
             all service areas
           </Link>{" "}
           or {content.phoneLine}
@@ -147,19 +147,19 @@ export default function CityPage({ params }: PageProps) {
         <div className="mt-4 flex flex-wrap gap-3">
           <a
             href={brand.phoneHref}
-            className="rounded-xl bg-green-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700"
+            className="rounded-lg bg-red-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700"
           >
             {content.ctaLabel}
           </a>
           <a
             href={brand.smsHref}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-blue-700"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Text Photo for Quote
+            Text a Photo for a Price
           </a>
         </div>
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-gray-700">
@@ -182,13 +182,13 @@ export default function CityPage({ params }: PageProps) {
         />
       </div>
 
-      <section className="mt-6 rounded-xl border-l-4 border-green-600 bg-gray-50 p-4 shadow-lg">
+      <section className="mt-6 rounded-lg border-l-4 border-red-600 bg-gray-50 p-4 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">Service Snapshot</h2>
         <p className="mt-2 text-sm text-gray-700">{content.aiSummary}</p>
       </section>
 
       <section className="mt-10 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Local landmarks
           </h2>
@@ -198,7 +198,7 @@ export default function CityPage({ params }: PageProps) {
             ))}
           </ul>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Neighborhoods we serve
           </h2>
@@ -208,7 +208,7 @@ export default function CityPage({ params }: PageProps) {
             ))}
           </ul>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Weather & housing
           </h2>
@@ -216,7 +216,7 @@ export default function CityPage({ params }: PageProps) {
             {content.weather} {content.housing}
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Local dumpsters used
           </h2>
@@ -224,7 +224,7 @@ export default function CityPage({ params }: PageProps) {
             {content.dumpsters.join(", ")}
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Local hauling types
           </h2>
@@ -232,7 +232,7 @@ export default function CityPage({ params }: PageProps) {
             {content.hauling.join(", ")}
           </p>
         </div>
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-gray-900">
             Zoning & permits
           </h2>
@@ -240,7 +240,7 @@ export default function CityPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">Service radius</h2>
         <p className="mt-2 text-sm text-gray-700">
           {content.serviceRadius} We provide service coverage without claiming a
@@ -248,7 +248,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Service scope in {location.name}
         </h2>
@@ -259,7 +259,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
         <ul className="mt-3 space-y-1 pl-5 text-sm text-gray-700">
           <li className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">PRIMARY</span>
+            <span className="inline-flex items-center rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">PRIMARY</span>
             <span className="font-semibold">Junk removal</span> — full-service hauling for homes & businesses
           </li>
           <li className="list-disc ml-4">Garage cleanouts</li>
@@ -278,7 +278,7 @@ export default function CityPage({ params }: PageProps) {
             <Link
               key={service.slug}
               href={`/services/${service.slug}/`}
-              className="rounded-xl border border-gray-200 px-4 py-2 text-gray-800"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-gray-800"
             >
               {service.name}
             </Link>
@@ -286,7 +286,7 @@ export default function CityPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Driving directions from Bartlett or Medinah
         </h2>
@@ -302,7 +302,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           How the rescue process works
         </h2>
@@ -319,7 +319,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Dumpster sizing guidance for {location.name}
         </h2>
@@ -335,7 +335,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Materials we remove in {location.name}
         </h2>
@@ -350,7 +350,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Why {location.name} calls the rescue crew
         </h2>
@@ -362,7 +362,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Local climate and debris patterns
         </h2>
@@ -374,7 +374,7 @@ export default function CityPage({ params }: PageProps) {
         </p>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">
           Coverage for homeowners, landlords, and contractors
         </h2>
@@ -396,7 +396,7 @@ export default function CityPage({ params }: PageProps) {
             <Link
               key={service.slug}
               href={`/services/${service.slug}/`}
-              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-lg"
+              className="rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
             >
               <p className="text-sm font-bold uppercase tracking-wide text-gray-900">
                 {service.name}
@@ -414,7 +414,7 @@ export default function CityPage({ params }: PageProps) {
             <Link
               key={city.slug}
               href={`/locations/${city.slug}/`}
-              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-lg"
+              className="rounded-lg border border-gray-200 bg-white p-4 shadow-lg"
             >
               <p className="text-sm font-bold uppercase tracking-wide text-gray-900">
                 {city.name}, IL
@@ -425,10 +425,10 @@ export default function CityPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <section className="mt-10 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold text-gray-900">Google Map</h2>
         <iframe
-          className="mt-4 h-80 w-full rounded-xl border border-gray-200"
+          className="mt-4 h-80 w-full rounded-lg border border-gray-200"
           title={`${location.name} map`}
           loading="lazy"
           src={
@@ -442,7 +442,7 @@ export default function CityPage({ params }: PageProps) {
 
       {location.priority ? (
         <section className="mt-10 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
             <h2 className="text-xl font-bold text-gray-900">
               Priority coverage for {location.name}
             </h2>
@@ -453,7 +453,7 @@ export default function CityPage({ params }: PageProps) {
               {content.priorityTestimonial}
             </p>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
             <h2 className="text-xl font-bold text-gray-900">
               Popular jobs in {location.name}
             </h2>
@@ -485,7 +485,7 @@ export default function CityPage({ params }: PageProps) {
       </section>
 
       {/* STEP 11: Final CTA - Decision Moment */}
-      <section className="mt-10 rounded-2xl bg-gray-900 p-8 text-center shadow-xl">
+      <section className="mt-10 rounded-lg bg-black p-8 text-center shadow-xl">
         <h2 className="text-2xl font-bold text-white">
           Ready to Get Your Junk Gone in {location.name}?
         </h2>
@@ -495,7 +495,7 @@ export default function CityPage({ params }: PageProps) {
         <div className="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <a
             href={brand.phoneHref}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-8 py-4 text-lg font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-8 py-4 text-lg font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700 sm:w-auto"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -504,13 +504,13 @@ export default function CityPage({ params }: PageProps) {
           </a>
           <a
             href={brand.smsHref}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-white bg-transparent px-8 py-4 text-lg font-bold uppercase tracking-wide text-white hover:bg-white/10 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-white bg-transparent px-8 py-4 text-lg font-bold uppercase tracking-wide text-white hover:bg-white/10 sm:w-auto"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Text Photo for Quote
+            Text a Photo for a Price
           </a>
         </div>
         <p className="mt-4 text-xs text-gray-400">

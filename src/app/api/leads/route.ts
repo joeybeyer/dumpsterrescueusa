@@ -181,8 +181,8 @@ async function sendEmailNotification(lead: {
 
   try {
     await transporter.sendMail({
-      from: "Dumpster Rescue USA <noreply@dumpsterrescueusa.com>",
-      to: process.env.ADMIN_EMAIL || "info@dumpsterrescueusa.com",
+      from: "Dumpster Rescue LLC <noreply@dumpsterrescueusa.com>",
+      to: process.env.ADMIN_EMAIL || "dumpsterrescue@gmail.com",
       subject: `New Lead: ${lead.name} - ${lead.city || "Unknown City"}`,
       html
     });
@@ -267,3 +267,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true }); // Always return success
   }
 }
+

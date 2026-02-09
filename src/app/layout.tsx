@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Anton } from "next/font/google";
 import "./globals.css";
 import CallBar from "@/components/CallBar";
 import StickyCallButton from "@/components/StickyCallButton";
@@ -13,11 +13,18 @@ const inter = Inter({
   display: "swap"
 });
 
+const anton = Anton({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-anton",
+  display: "swap"
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(brand.domain),
   title: {
-    default: "Dumpster Rescue USA | Junk Removal & Demolition",
-    template: "%s | Dumpster Rescue USA"
+    default: "Dumpster Rescue LLC | Junk Removal & Demolition",
+    template: "%s | Dumpster Rescue LLC"
   },
   description:
     "Fast, professional junk removal, light demolition, and dumpster rental across Chicagoland suburbs.",
@@ -32,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${anton.variable}`}>
       <body className="font-sans">
         <CallBar />
         <main>{children}</main>
@@ -43,3 +50,4 @@ export default function RootLayout({
     </html>
   );
 }
+

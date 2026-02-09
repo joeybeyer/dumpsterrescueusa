@@ -30,7 +30,7 @@ export default function LastUpdated({
   if (variant === "badge") {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 ${className}`}
+        className={`inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800 ${className}`}
       >
         {showIcon && (
           <svg

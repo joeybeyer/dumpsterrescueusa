@@ -5,8 +5,8 @@ type KeyTakeawaysProps = {
 
 export default function KeyTakeaways({ title, bullets }: KeyTakeawaysProps) {
   return (
-    <section className="rounded-xl border-l-4 border-green-600 bg-gray-50 p-4 shadow-lg">
-      <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+    <section className="rounded-xl border-l-4 border-red-600 bg-gray-50 p-4 shadow-lg">
+      <p className="text-xs font-bold uppercase tracking-wide text-red-600">
         Key Takeaways
       </p>
       <h2 className="mt-2 text-xl font-bold text-gray-900">{title}</h2>

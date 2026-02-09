@@ -130,7 +130,7 @@ function BeforeAfterSlider({ item }: { item: GalleryItem }) {
   const hasRealImages = item.beforeImage && item.afterImage;
 
   return (
-    <div className="slider-touch-zone relative h-64 w-full overflow-hidden rounded-t-xl">
+    <div className="slider-touch-zone relative h-64 w-full overflow-hidden rounded-t-lg">
       {/* After image/placeholder (background) */}
       <div className="absolute inset-0">
         {item.afterImage ? (
@@ -140,16 +140,16 @@ function BeforeAfterSlider({ item }: { item: GalleryItem }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className={`flex h-full w-full items-center justify-center ${item.placeholderAfter || 'bg-green-100'}`}>
+          <div className={`flex h-full w-full items-center justify-center ${item.placeholderAfter || 'bg-red-100'}`}>
             <div className="text-center">
-              <svg className="mx-auto h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="mx-auto h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <p className="mt-2 text-sm font-medium text-green-700">After: Clean</p>
+              <p className="mt-2 text-sm font-medium text-red-700">After: Clean</p>
             </div>
           </div>
         )}
-        <div className="absolute bottom-2 right-2 rounded bg-green-600 px-2 py-1 text-xs font-bold text-white shadow">
+        <div className="absolute bottom-2 right-2 rounded bg-red-600 px-2 py-1 text-xs font-bold text-white shadow">
           AFTER
         </div>
       </div>
@@ -221,12 +221,12 @@ function BeforeAfterSlider({ item }: { item: GalleryItem }) {
 // Single image card component
 function ImageCard({ item }: { item: GalleryItem }) {
   return (
-    <div className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg transition-shadow hover:shadow-xl">
+    <div className="group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg transition-shadow hover:shadow-xl">
       {/* Image or Before/After slider */}
       {item.isBeforeAfter ? (
         <BeforeAfterSlider item={item} />
       ) : (
-        <div className="relative h-64 w-full overflow-hidden rounded-t-xl">
+        <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
           {item.afterImage ? (
             <img
               src={item.afterImage}
@@ -251,7 +251,7 @@ function ImageCard({ item }: { item: GalleryItem }) {
         <div className="flex items-start justify-between">
           <div>
             <h3 className="font-bold text-gray-900">{item.title}</h3>
-            <p className="text-sm text-green-600">{item.location}</p>
+            <p className="text-sm text-red-600">{item.location}</p>
           </div>
           {item.isBeforeAfter && (
             <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-800">
@@ -285,7 +285,7 @@ export default function ProofGallery() {
             Real projects. Real results. Drag the slider to compare before and after.
           </p>
           {/* Same-day conversion bridge */}
-          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-green-700">
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-700">
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -301,7 +301,7 @@ export default function ProofGallery() {
               onClick={() => setActiveCategory(category.id)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 activeCategory === category.id
-                  ? "bg-green-600 text-white"
+                  ? "bg-red-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -325,13 +325,13 @@ export default function ProofGallery() {
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <a
               href="tel:6307358700"
-              className="rounded-xl bg-green-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-green-700"
+              className="rounded-lg bg-red-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-red-700"
             >
               Call (630) 735-8700
             </a>
             <a
               href="sms:6307358700"
-              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg hover:bg-blue-700"
             >
               Text Photos for Quote
             </a>

@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Legal",
-  description: "Legal information for Dumpster Rescue USA.",
+  description: "Legal information for Dumpster Rescue LLC.",
   alternates: {
     canonical: "/legal/"
   }
@@ -17,3 +17,4 @@ export default function LegalPage() {
     </div>
   );
 }
+

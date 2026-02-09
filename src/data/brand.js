@@ -1,5 +1,5 @@
 const brand = {
-  name: "Dumpster Rescue USA",
+  name: "Dumpster Rescue LLC",
   legalName: "Dumpster Rescue LLC",
   phone: "(630) 735-8700",
   phoneHref: "tel:+16307358700",
@@ -30,3 +30,4 @@ const brand = {
 };
 
 module.exports = { brand };
+

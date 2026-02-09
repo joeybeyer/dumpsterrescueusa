@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ProofGallery from "@/components/ProofGallery";
 
 export const metadata: Metadata = {
-  title: "Project Gallery - Before & After Photos | Dumpster Rescue USA",
+  title: "Project Gallery - Before & After Photos | Dumpster Rescue LLC",
   description:
     "See real before and after photos of our junk removal, demolition, and dumpster rental projects across Chicagoland. Proof we get the job done right.",
   alternates: {
@@ -34,15 +34,15 @@ export default function GalleryPage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="grid gap-8 text-center md:grid-cols-3">
             <div>
-              <p className="text-3xl font-bold text-green-600">5.0</p>
+              <p className="text-3xl font-bold text-red-600">5.0</p>
               <p className="mt-1 text-sm text-gray-600">Google Rating (64 Reviews)</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-green-600">Same-Day</p>
+              <p className="text-3xl font-bold text-red-600">Same-Day</p>
               <p className="mt-1 text-sm text-gray-600">Service Available</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-green-600">100%</p>
+              <p className="text-3xl font-bold text-red-600">100%</p>
               <p className="mt-1 text-sm text-gray-600">Licensed & Insured</p>
             </div>
           </div>
@@ -51,3 +51,4 @@ export default function GalleryPage() {
     </div>
   );
 }
+

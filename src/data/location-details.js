@@ -194,7 +194,7 @@ const locationDetails = {
       "Garage, basement, estate & construction cleanouts",
       "Upfront pricing - no surprises"
     ],
-    aiSummary: "Dumpster Rescue USA provides fast, same-day junk removal and light demolition services throughout Elgin, Illinois. Our local crews handle garage cleanouts, estate cleanups, construction debris, and appliance removal with upfront pricing and clean job sites.",
+    aiSummary: "Dumpster Rescue LLC provides fast, same-day junk removal and light demolition services throughout Elgin, Illinois. Our local crews handle garage cleanouts, estate cleanups, construction debris, and appliance removal with upfront pricing and clean job sites.",
     mapEmbed:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d94824.36063525527!2d-88.33898505!3d42.0375775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880efbc0eb5c0333%3A0x303bcbf1d154e560!2sElgin%2C%20IL!5e0!3m2!1sen!2sus!4v1768523651798!5m2!1sen!2sus"
   },
@@ -321,7 +321,7 @@ const locationDetails = {
     mapEmbed:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47415.98585185361!2d-88.09123129999999!3d42.032476450000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880faf88436224e5%3A0x43bd31cd678f7351!2sSchaumburg%2C%20IL!5e0!3m2!1sen!2sus!4v1768523925353!5m2!1sen!2sus",
     aiSummary:
-      "Dumpster Rescue USA provides same-day junk removal, property cleanouts, demolition debris hauling, and appliance removal throughout Schaumburg, Illinois."
+      "Dumpster Rescue LLC provides same-day junk removal, property cleanouts, demolition debris hauling, and appliance removal throughout Schaumburg, Illinois."
   },
   "bartlett-il": {
     heroH1: "Bartlett's Fastest Junk Removal & Light Demolition Team",
@@ -338,7 +338,7 @@ const locationDetails = {
     mapEmbed:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3517.3548164798003!2d-88.20266819999999!3d41.995245700000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f07d388d5fce1%3A0xa410c666518792f8!2sDumpster%20Rescue%20LLC!5e1!3m2!1sen!2sus!4v1768522891241!5m2!1sen!2sus",
     aiSummary:
-      "Dumpster Rescue USA provides fast junk removal, appliance hauling, garage cleanouts, and small demolition services in Bartlett, Illinois with same-day availability and upfront pricing."
+      "Dumpster Rescue LLC provides fast junk removal, appliance hauling, garage cleanouts, and small demolition services in Bartlett, Illinois with same-day availability and upfront pricing."
   },
   "medinah-il": {
     landmarks: ["Medinah Country Club", "Medinah Village Hall", "Local commuter corridors"],
@@ -367,8 +367,9 @@ const locationDetails = {
     mapEmbed:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23731.010561231302!2d-88.04833414999999!3d41.97072945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880e5326b197981b%3A0xd1fc113e3bcca028!2sMedinah%2C%20Bloomingdale%20Township%2C%20IL!5e0!3m2!1sen!2sus!4v1768523984581!5m2!1sen!2sus",
     aiSummary:
-      "Dumpster Rescue USA offers full-service junk removal and light demolition in Medinah, IL, including appliance removal, garage cleanouts, renovation debris, and estate cleanups."
+      "Dumpster Rescue LLC offers full-service junk removal and light demolition in Medinah, IL, including appliance removal, garage cleanouts, renovation debris, and estate cleanups."
   }
 };
 
 module.exports = { locationDetails };
+

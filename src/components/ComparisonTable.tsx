@@ -56,7 +56,7 @@ export default function ComparisonTable({
                 key={rowIndex}
                 className={
                   highlightFirst && rowIndex === 0
-                    ? "bg-green-50"
+                    ? "bg-red-50"
                     : rowIndex % 2 === 0
                     ? "bg-white"
                     : "bg-gray-50"

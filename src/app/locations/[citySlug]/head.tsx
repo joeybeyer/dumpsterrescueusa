@@ -34,7 +34,7 @@ export default function Head({ params }: HeadProps) {
 
   return (
     <>
-      <title>{`${location.name}, IL Junk Removal & Demolition | Dumpster Rescue USA`}</title>
+      <title>{`${location.name}, IL Junk Removal & Demolition | Dumpster Rescue LLC`}</title>
       <meta
         name="description"
         content={`Junk removal, demolition, and dumpster services in ${location.name}, IL.`}
@@ -47,3 +47,4 @@ export default function Head({ params }: HeadProps) {
     </>
   );
 }
+

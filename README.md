@@ -1,4 +1,4 @@
-# Dumpster Rescue USA — Next.js Static Export
+# Dumpster Rescue LLC — Next.js Static Export
 
 ## Quick start
 - `npm install`
@@ -18,3 +18,4 @@
 ## Deployment
 - Use `scripts/deploy.sh` on the server (builds and syncs `out/`).
 - Configure Nginx using `deploy/nginx.conf`.
+

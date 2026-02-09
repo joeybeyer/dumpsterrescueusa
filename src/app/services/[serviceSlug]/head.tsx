@@ -26,7 +26,7 @@ export default function Head({ params }: HeadProps) {
 
   return (
     <>
-      <title>{`${service.name} in Chicagoland | Dumpster Rescue USA`}</title>
+      <title>{`${service.name} in Chicagoland | Dumpster Rescue LLC`}</title>
       <meta name="description" content={service.description} />
       <link rel="canonical" href={`${brand.domain}/services/${service.slug}/`} />
       <script
@@ -36,3 +36,4 @@ export default function Head({ params }: HeadProps) {
     </>
   );
 }
+

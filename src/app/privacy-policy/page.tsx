@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for Dumpster Rescue USA.",
+  description: "Privacy policy for Dumpster Rescue LLC.",
   alternates: {
     canonical: "/privacy-policy/"
   }
@@ -17,3 +17,4 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+

@@ -66,10 +66,10 @@ Sitemap: ${url("/sitemap.xml")}
 `;
 fs.writeFileSync(path.join(publicDir, "robots.txt"), robots);
 
-const llms = `# Dumpster Rescue USA
+const llms = `# Dumpster Rescue LLC
 
 About:
-Dumpster Rescue USA (Dumpster Rescue LLC) provides junk removal, light demolition, and dumpster rental
+Dumpster Rescue LLC (Dumpster Rescue LLC) provides junk removal, light demolition, and dumpster rental
 services across Chicagoland suburbs in DuPage, Kane, and Cook counties. We are a Bartlett-based team
 with an additional service office in Medinah.
 
@@ -95,3 +95,4 @@ const redirectMap = redirects
   .map((item) => `rewrite ^${item.from}$ ${item.to} permanent;`)
   .join("\n");
 fs.writeFileSync(path.join(deployDir, "redirects.conf"), redirectMap);
+

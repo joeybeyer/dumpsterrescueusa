@@ -125,10 +125,11 @@ export const buildCityContent = (city: string, slug?: string) => {
     aiSummary:
       override.aiSummary?.length > 0
         ? override.aiSummary
-        : `Dumpster Rescue USA provides fast junk removal and light demolition in ${city}, Illinois with same-day availability and upfront pricing.`,
+        : `Dumpster Rescue LLC provides fast junk removal and light demolition in ${city}, Illinois with same-day availability and upfront pricing.`,
     mapEmbed:
       override.mapEmbed?.length > 0
         ? override.mapEmbed
         : ""
   };
 };
+

@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Refund Policy",
-  description: "Refund policy for Dumpster Rescue USA.",
+  description: "Refund policy for Dumpster Rescue LLC.",
   alternates: {
     canonical: "/refund-policy/"
   }
@@ -17,3 +17,4 @@ export default function RefundPolicyPage() {
     </div>
   );
 }
+

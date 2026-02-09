@@ -3,7 +3,7 @@ import { brand } from "@/data/brand";
 export const metadata = {
   title: "Tips & Advice",
   description:
-    "Helpful cleanup and demolition tips from the Dumpster Rescue USA team.",
+    "Helpful cleanup and demolition tips from the Dumpster Rescue LLC team.",
   alternates: {
     canonical: "/tips-advice/"
   }
@@ -12,7 +12,7 @@ export const metadata = {
 export default function TipsAdvicePage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-6 pb-16 pt-10">
-      <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+      <p className="text-xs font-bold uppercase tracking-wide text-red-600">
         Tips & Advice
       </p>
       <h1 className="mt-2 text-3xl font-bold text-gray-900">
@@ -26,7 +26,7 @@ export default function TipsAdvicePage() {
         Last updated{" "}
         <time dateTime={brand.updatedDate}>{brand.updatedDate}</time>
       </p>
-      <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
+      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
         <p className="text-sm text-gray-700">
           Coming soon: practical checklists and local permit guidance.
         </p>
@@ -34,3 +34,4 @@ export default function TipsAdvicePage() {
     </div>
   );
 }
+
