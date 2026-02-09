@@ -42,3 +42,11 @@ next-env.d.ts
 # public/images/generated/
 
 /generated/prisma
+
+# Large files
+dev-static-export.zip
+dumpsterrescueusa-deploy.tar.gz
+*.tar.gz
+*.zip
+dev.db
+*.ai
