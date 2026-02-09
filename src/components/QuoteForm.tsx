@@ -317,23 +317,23 @@ export default function QuoteForm({
     setError(null);
 
     try {
-      const res = await fetch("/api/leads", {
+      const res = await fetch("/send-form.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          zip: data.zipCode,
           zipCode: data.zipCode,
           city: data.city,
           state: data.state,
           projectType: data.projectType,
+          service: data.projectType,
           dumpsterSize: data.dumpsterSize,
           name: data.name,
           email: data.email,
           phone: data.phone,
           smsOptIn: data.smsOptIn,
           message: data.message,
-          source: source || window.location.pathname,
-          formTimestamp: formLoadTime,
-          honeypot: data.honeypot
+          source: source || window.location.pathname
         })
       });
 

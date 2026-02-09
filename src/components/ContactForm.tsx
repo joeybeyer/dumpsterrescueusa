@@ -32,17 +32,17 @@ export default function ContactForm() {
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      const res = await fetch("/api/leads", {
+      const res = await fetch("/send-form.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: data.name,
           phone: data.phone,
-          email: `${data.phone}@phone-only.local`, // Placeholder for phone-only submissions
+          email: "",
+          service: data.projectType,
           projectType: data.projectType,
           message: `Address: ${data.address}\n\nDescription:\n${data.description || "Not provided"}`,
-          source: "/contact",
-          formTimestamp: Date.now()
+          source: "/contact"
         })
       });
 
